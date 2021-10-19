@@ -8,23 +8,23 @@ using System.Collections.Generic;
 public class Hiisipeli : PhysicsGame
 {
     private static readonly String[] lines = {
-                  "      X           X     ",
-                  "                        ",
-                  "                        ",
-                  "Y                      Y",
-                  "                        ",
-                  "                        ",
-                  "                        ",
-                  "                        ",
+                  "     X             X    ",
                   "                        ",
                   "Y                      Y",
                   "                        ",
+                  "              H         ",
                   "                        ",
-                  "      X           X     ",
+                  "                        ",
+                  "      H                ",
+                  "                  H     ",
+                  "                        ",
+                  "Y                      Y",
+                  "                        ",
+                  "     X             X    ",
                   };
     
-    private static readonly int tileWidth = 2000 / lines[0].Length;
-    private static readonly int tileHeight = 1000 / lines.Length;
+    private static readonly int tileWidth = 1000 / lines[0].Length;
+    private static readonly int tileHeight = 800 / lines.Length;
 
     Vector nopeusYlos = new Vector(0, 300);
     Vector nopeusAlas = new Vector(0, -300);  
@@ -40,9 +40,6 @@ public class Hiisipeli : PhysicsGame
         PhoneBackButton.Listen(ConfirmExit, "Lopeta peli");
         Keyboard.Listen(Key.Escape, ButtonState.Pressed, ConfirmExit, "Lopeta peli"); 
         
-        TileMap tiles = TileMap.FromStringArray(lines);
-
-        tiles.SetTileMethod('X', LuoSeinax, Color.Wheat);
     }
 
 
@@ -67,11 +64,15 @@ public class Hiisipeli : PhysicsGame
         /// LuoSeinax(0.0, Level.Bottom);
         /// LuoSeinax(0.0, Level.Top);
 
-        
+        TileMap tiles = TileMap.FromStringArray(lines);
 
-        
+        tiles.SetTileMethod('X', LuoSeinax, Color.DarkGray);
+        tiles.SetTileMethod('Y', LuoSeinay, Color.DarkGray);
+        tiles.SetTileMethod('H', LuoHiisi, Color.BrightGreen);
 
-        Camera.ZoomToLevel();
+
+        tiles.Execute(tileWidth, tileHeight);
+
 
         pelaaja = new PhysicsObject(60.0, 60.0);
         pelaaja.Shape = Shape.Circle;
@@ -103,22 +104,33 @@ public class Hiisipeli : PhysicsGame
         pelaaja.Velocity = nopeus;
     }
 
-    private PhysicsObject LuoSeinay(double x, double y)
+    private void LuoSeinay(Vector paikka, double x, double y, Color vari)
     {
-        PhysicsObject Seina = PhysicsObject.CreateStaticObject(100.0, 1000.0);
-        Seina.X = x;
-        Seina.Y = y;
+        PhysicsObject Seina = PhysicsObject.CreateStaticObject(80.0, 300.0);
+        Seina.Position = paikka;
+        Seina.Color = vari;
+        Seina.Tag = "rakenne";
         Add(Seina);
-        return Seina;
     }
 
-    private PhysicsObject LuoSeinax(double x, double y)
+    private void LuoSeinax(Vector paikka, double x, double y, Color vari)
     {
-        PhysicsObject Seina = PhysicsObject.CreateStaticObject(2000.0, 150.0);
-        Seina.X = x;
-        Seina.Y = y;
+        PhysicsObject Seina = PhysicsObject.CreateStaticObject(400.0, 100.0);
+        Seina.Position = paikka;
+        Seina.Color = vari;
+        Seina.Tag = "rakenne";
         Add(Seina);
-        return Seina;
+    }
+
+    private void LuoHiisi(Vector paikka, double x, double y, Color vari)
+    {
+        PhysicsObject Hiisi = new PhysicsObject(60.0, 60.0);
+        Hiisi.Position = paikka;
+        Hiisi.Color = vari;
+        Hiisi.Shape = Shape.Triangle;
+        
+        Hiisi.Tag = "Miekkahiisi";
+        Add(Hiisi);
     }
 }
 
