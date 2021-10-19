@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31624.102
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hiisipeli", "Hiisipeli\Hiisipeli.csproj", "{07B54B16-3480-4CCB-B604-422AE97CB3DD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hiisipeli", "Hiisipeli\Hiisipeli.csproj", "{07B54B16-3480-4CCB-B604-422AE97CB3DD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ponnng", "..\..\kurssit\ohj1\viikko4\Ponnng\Ponnng\Ponnng.csproj", "{24FD3FCB-47A5-43FB-AC03-49B9A4DE93C4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lumiukko", "..\..\..\..\kurssit\ohj1\paate\paate1\Lumiukko\Lumiukko.csproj", "{385D181A-3A1C-45FD-9379-05231148C156}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{24FD3FCB-47A5-43FB-AC03-49B9A4DE93C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{24FD3FCB-47A5-43FB-AC03-49B9A4DE93C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{24FD3FCB-47A5-43FB-AC03-49B9A4DE93C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{385D181A-3A1C-45FD-9379-05231148C156}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{385D181A-3A1C-45FD-9379-05231148C156}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{385D181A-3A1C-45FD-9379-05231148C156}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{385D181A-3A1C-45FD-9379-05231148C156}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

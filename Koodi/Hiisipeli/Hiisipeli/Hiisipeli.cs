@@ -32,14 +32,14 @@ public class Hiisipeli : PhysicsGame
     Vector nopeusVasemmalle = new Vector(-300, -0);
 
     PhysicsObject pelaaja;
+    PhysicsObject Miekka;
 
     public override void Begin()
-    {       
+    {
+        ClearGameObjects();
+        ClearControls();
         LuoKentta();
         LuoOhjaus();
-        PhoneBackButton.Listen(ConfirmExit, "Lopeta peli");
-        Keyboard.Listen(Key.Escape, ButtonState.Pressed, ConfirmExit, "Lopeta peli"); 
-        
     }
 
 
@@ -79,12 +79,25 @@ public class Hiisipeli : PhysicsGame
         pelaaja.Color = Color.Black;
         pelaaja.X = 0.0;
         pelaaja.Y = 200.0;
+        AddCollisionHandler(pelaaja, "hiisi", PelaajaanOsui);
 
         Add(pelaaja);
+
+        Miekka = new PhysicsObject(40.0, 60.0);
+        Miekka.Shape = Shape.Triangle;
+        Miekka.Color = Color.DarkRed;
+        Miekka.Tag = "miekka";
+        AddCollisionHandler(Miekka, "hiisi", HiiteenOsui);
+
     }
 
     private void LuoOhjaus()
     {
+        Keyboard.Listen(Key.F1, ButtonState.Pressed, ShowControlHelp, "Näytä kontrollit");
+        Keyboard.Listen(Key.F2, ButtonState.Pressed, Begin, "Uusi Peli");
+        PhoneBackButton.Listen(ConfirmExit, "Lopeta peli");
+        Keyboard.Listen(Key.Escape, ButtonState.Pressed, ConfirmExit, "Lopeta peli"); 
+
         Keyboard.Listen(Key.W, ButtonState.Down, SaadaNopeus, "Liikuta ritaria ylös", pelaaja, nopeusYlos);
         Keyboard.Listen(Key.W, ButtonState.Released, SaadaNopeus, null, pelaaja, Vector.Zero);
 
@@ -96,6 +109,18 @@ public class Hiisipeli : PhysicsGame
 
         Keyboard.Listen(Key.A, ButtonState.Down, SaadaNopeus, "Liikuta ritaria Vasemmalle", pelaaja, nopeusVasemmalle);
         Keyboard.Listen(Key.A, ButtonState.Released, SaadaNopeus, null, pelaaja, Vector.Zero);
+
+        Keyboard.Listen(Key.Up, ButtonState.Pressed, LyoMiekalla, null, 0.0, 70.0, Miekka);
+        Keyboard.Listen(Key.Up, ButtonState.Released, PoistaMiekka, null, Miekka);
+
+        Keyboard.Listen(Key.Down, ButtonState.Pressed, LyoMiekalla, null, 0.0, -70.0, Miekka);
+        Keyboard.Listen(Key.Down, ButtonState.Released, PoistaMiekka, null, Miekka);
+
+        Keyboard.Listen(Key.Left, ButtonState.Pressed, LyoMiekalla, null, -70.0, 0.0, Miekka);
+        Keyboard.Listen(Key.Left, ButtonState.Released, PoistaMiekka, null, Miekka);
+
+        Keyboard.Listen(Key.Right, ButtonState.Pressed, LyoMiekalla, null, 70.0, 0.0, Miekka);
+        Keyboard.Listen(Key.Right, ButtonState.Released, PoistaMiekka, null, Miekka);
     }
 
 
@@ -118,7 +143,7 @@ public class Hiisipeli : PhysicsGame
         PhysicsObject Seina = PhysicsObject.CreateStaticObject(400.0, 100.0);
         Seina.Position = paikka;
         Seina.Color = vari;
-        Seina.Tag = "rakenne";
+        Seina.Tag = "Seinä";
         Add(Seina);
     }
 
@@ -129,8 +154,49 @@ public class Hiisipeli : PhysicsGame
         Hiisi.Color = vari;
         Hiisi.Shape = Shape.Triangle;
         
-        Hiisi.Tag = "Miekkahiisi";
+        Hiisi.Tag = "hiisi";
         Add(Hiisi);
+    }
+
+    private void TapaPelaaja(IPhysicsObject pelaaja)
+    {
+        Explosion kuolema = new Explosion(pelaaja.Width * 2);
+        kuolema.Position = pelaaja.Position;
+        kuolema.UseShockWave = false;
+        Add(kuolema);
+        Remove(pelaaja);
+    }
+
+    private void TapaHiisi(IPhysicsObject hiisi)
+    {
+        Explosion kuolema = new Explosion(hiisi.Width * 2);
+        kuolema.Position = hiisi.Position;
+        kuolema.UseShockWave = false;
+        Add(kuolema);
+        Remove(hiisi);
+    }
+
+    private void PelaajaanOsui(PhysicsObject pelaaja, PhysicsObject hiisi)
+    {
+        TapaPelaaja(pelaaja);
+    }
+
+    private void HiiteenOsui(PhysicsObject Miekka, PhysicsObject hiisi)
+    {
+        TapaHiisi(hiisi);
+    }
+
+    private void LyoMiekalla(double x, double y, PhysicsObject miekka)
+    {
+        miekka.X = pelaaja.X + x;
+        miekka.Y = pelaaja.Y + y;
+        Add(miekka);
+        Timer.CreateAndStart(1.0, null);
+    }
+
+    private void PoistaMiekka(IPhysicsObject miekka)
+    {
+        Remove(miekka);
     }
 }
 
