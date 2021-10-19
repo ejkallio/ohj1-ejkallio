@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31624.102
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hiisipeli", "Hiisipeli\Hiisipeli.csproj", "{07B54B16-3480-4CCB-B604-422AE97CB3DD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ponnng", "..\..\kurssit\ohj1\viikko4\Ponnng\Ponnng\Ponnng.csproj", "{24FD3FCB-47A5-43FB-AC03-49B9A4DE93C4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{07B54B16-3480-4CCB-B604-422AE97CB3DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07B54B16-3480-4CCB-B604-422AE97CB3DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07B54B16-3480-4CCB-B604-422AE97CB3DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07B54B16-3480-4CCB-B604-422AE97CB3DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24FD3FCB-47A5-43FB-AC03-49B9A4DE93C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24FD3FCB-47A5-43FB-AC03-49B9A4DE93C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24FD3FCB-47A5-43FB-AC03-49B9A4DE93C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24FD3FCB-47A5-43FB-AC03-49B9A4DE93C4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {15638E26-1E9D-4CD0-B648-CA40D62E932F}
+	EndGlobalSection
+EndGlobal
