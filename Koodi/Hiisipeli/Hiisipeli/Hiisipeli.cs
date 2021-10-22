@@ -13,11 +13,11 @@ public class Hiisipeli : PhysicsGame
                   "Y                      Y",
                   "                        ",
                   "              H         ",
-                  "                        ",
-                  "                        ",
+                  "   H                    ",
+                  "           H            ",
                   "      H                ",
-                  "                  H     ",
-                  "                        ",
+                  "              H   H     ",
+                  "         H              ",
                   "Y                      Y",
                   "                        ",
                   "     X             X    ",
@@ -33,13 +33,14 @@ public class Hiisipeli : PhysicsGame
 
     PhysicsObject pelaaja;
     IntMeter tapot;
+    IntMeter hiisia;
     public override void Begin()
     {
         ClearGameObjects();
         ClearControls();
+        LisaaLaskurit();
         LuoKentta();
         LuoOhjaus();
-        LisaaLaskuri();
     }
 
     /// <summary>
@@ -83,7 +84,7 @@ public class Hiisipeli : PhysicsGame
         pelaaja.Y = 200.0;
         pelaaja.IgnoresPhysicsLogics = true;
         pelaaja.Restitution = 0;
-        AddCollisionHandler(pelaaja, "hiisi", PelaajaanOsui);
+        AddCollisionHandler(pelaaja, "hiisi", PelaajaanOsui);        
 
         Add(pelaaja);
 
@@ -125,6 +126,10 @@ public class Hiisipeli : PhysicsGame
     private void SaadaNopeus(PhysicsObject pelaaja, Vector nopeus)
     {
         pelaaja.Velocity += nopeus;
+        if (pelaaja.Velocity.X > 300.0) pelaaja.Velocity = new Vector(300.0, pelaaja.Velocity.Y);
+        if (pelaaja.Velocity.X < -300.0) pelaaja.Velocity = new Vector(-300.0, pelaaja.Velocity.Y);
+        if (pelaaja.Velocity.Y > 300.0) pelaaja.Velocity = new Vector(pelaaja.Velocity.X, 300.0);
+        if (pelaaja.Velocity.Y < -300.0) pelaaja.Velocity = new Vector(pelaaja.Velocity.X, -300.0);
     }
 
 
@@ -158,7 +163,7 @@ public class Hiisipeli : PhysicsGame
         Seina.Position = paikka;
         Seina.Color = vari;
         Seina.Restitution = 0;
-        Seina.Tag = "Seinä";
+        Seina.Tag = "rakenne";
         Add(Seina);
     }
 
@@ -179,6 +184,7 @@ public class Hiisipeli : PhysicsGame
         /// Hiisi.Image = "hiisi";
         Hiisi.Tag = "hiisi";
         Add(Hiisi);
+        hiisia.Value += 1;
     }
 
     private void TapaPelaaja(IPhysicsObject pelaaja)
@@ -237,6 +243,8 @@ public class Hiisipeli : PhysicsGame
         miekka.Shape = Shape.Triangle;
         miekka.Color = Color.DarkRed;
         miekka.Tag = "miekka";
+        miekka.IgnoresPhysicsLogics = true;
+        miekka.Restitution = 0;
         AddCollisionHandler(miekka, "hiisi", HiiteenOsui);
         AddCollisionHandler(miekka, "hiisi", KasittelePisteet);
         Add(miekka);
@@ -256,20 +264,28 @@ public class Hiisipeli : PhysicsGame
     IntMeter LuoTappoLaskuri()
     {
         IntMeter laskuri = new IntMeter(0);
-        laskuri.MaxValue = 3;
-        
+        /// laskuri.MaxValue = 3;
+
         return laskuri;
     }
 
-    private void LisaaLaskuri()
+    IntMeter LuoHiisiLaskuri()
+    {
+        IntMeter laskuri = new IntMeter(0);
+
+        return laskuri;
+    }
+
+    private void LisaaLaskurit()
     {
         tapot = LuoTappoLaskuri();
+        hiisia = LuoHiisiLaskuri();
     }
 
     private void KasittelePisteet(PhysicsObject miekka, PhysicsObject kohde)
     {
         tapot.Value += 1;
-        if (tapot.Value == 3) LuoKruunu();
+        if (tapot.Value == hiisia.Value) LuoKruunu();
     }
 
     private void KoskeKruunua(PhysicsObject pelaaja, PhysicsObject kruunu)
