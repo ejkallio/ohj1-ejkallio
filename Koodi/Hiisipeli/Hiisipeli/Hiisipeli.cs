@@ -83,12 +83,11 @@ public class Hiisipeli : PhysicsGame
 
         Add(pelaaja);
 
-        Miekka = new PhysicsObject(40.0, 60.0);
+        Miekka = PhysicsObject.CreateStaticObject(40.0, 60.0);
         Miekka.Shape = Shape.Triangle;
         Miekka.Color = Color.DarkRed;
         Miekka.Tag = "miekka";
         AddCollisionHandler(Miekka, "hiisi", HiiteenOsui);
-
     }
 
     private void LuoOhjaus()
@@ -111,16 +110,16 @@ public class Hiisipeli : PhysicsGame
         Keyboard.Listen(Key.A, ButtonState.Released, SaadaNopeus, null, pelaaja, Vector.Zero);
 
         Keyboard.Listen(Key.Up, ButtonState.Pressed, LyoMiekalla, null, 0.0, 70.0, Miekka);
-        Keyboard.Listen(Key.Up, ButtonState.Released, PoistaMiekka, null, Miekka);
+        /// Keyboard.Listen(Key.Up, ButtonState.Released, PoistaMiekka, null, Miekka);
 
         Keyboard.Listen(Key.Down, ButtonState.Pressed, LyoMiekalla, null, 0.0, -70.0, Miekka);
-        Keyboard.Listen(Key.Down, ButtonState.Released, PoistaMiekka, null, Miekka);
+        /// Keyboard.Listen(Key.Down, ButtonState.Released, PoistaMiekka, null, Miekka);
 
         Keyboard.Listen(Key.Left, ButtonState.Pressed, LyoMiekalla, null, -70.0, 0.0, Miekka);
-        Keyboard.Listen(Key.Left, ButtonState.Released, PoistaMiekka, null, Miekka);
+        /// Keyboard.Listen(Key.Left, ButtonState.Released, PoistaMiekka, null, Miekka);
 
         Keyboard.Listen(Key.Right, ButtonState.Pressed, LyoMiekalla, null, 70.0, 0.0, Miekka);
-        Keyboard.Listen(Key.Right, ButtonState.Released, PoistaMiekka, null, Miekka);
+        /// Keyboard.Listen(Key.Right, ButtonState.Released, PoistaMiekka, null, Miekka);
     }
 
 
@@ -153,7 +152,7 @@ public class Hiisipeli : PhysicsGame
         Hiisi.Position = paikka;
         Hiisi.Color = vari;
         Hiisi.Shape = Shape.Triangle;
-        
+        /// Hiisi.Image = "hiisi";
         Hiisi.Tag = "hiisi";
         Add(Hiisi);
     }
@@ -191,7 +190,7 @@ public class Hiisipeli : PhysicsGame
         miekka.X = pelaaja.X + x;
         miekka.Y = pelaaja.Y + y;
         Add(miekka);
-        Timer.CreateAndStart(1.0, null);
+        Timer.CreateAndStart(0.1, miekka.Destroy);
     }
 
     private void PoistaMiekka(IPhysicsObject miekka)
