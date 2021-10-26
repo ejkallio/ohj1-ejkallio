@@ -8,19 +8,19 @@ using System.Collections.Generic;
 public class Hiisipeli : PhysicsGame
 {
     private static readonly String[] lines = {
-                  "     X             X    ",
+                  "     X      X      X    ",
                   "                        ",
                   "Y                      Y",
                   "                        ",
                   "              H         ",
                   "   H                    ",
-                  "           H            ",
-                  "      H                ",
-                  "              H   H     ",
+                  "Y          H            ",
+                  "                        ",
+                  "                  H     ",
                   "         H              ",
                   "Y                      Y",
                   "                        ",
-                  "     X             X    ",
+                  "     X      X      X    ",
                   };
     
     private static readonly int tileWidth = 1000 / lines[0].Length;
@@ -32,6 +32,7 @@ public class Hiisipeli : PhysicsGame
     Vector nopeusVasemmalle = new Vector(-300, -0);
 
     PhysicsObject pelaaja;
+    PhysicsObject Hiisi;
     IntMeter tapot;
     IntMeter hiisia;
     public override void Begin()
@@ -67,15 +68,6 @@ public class Hiisipeli : PhysicsGame
         /// LuoSeinax(0.0, Level.Bottom);
         /// LuoSeinax(0.0, Level.Top);
 
-        TileMap tiles = TileMap.FromStringArray(lines);
-
-        tiles.SetTileMethod('X', LuoSeinax, Color.DarkGray);
-        tiles.SetTileMethod('Y', LuoSeinay, Color.DarkGray);
-        tiles.SetTileMethod('H', LuoHiisi, Color.BrightGreen);
-
-
-        tiles.Execute(tileWidth, tileHeight);
-
         //gameobject tai staticobject
         pelaaja = new PhysicsObject(60.0, 60.0);
         pelaaja.Shape = Shape.Circle;
@@ -84,9 +76,18 @@ public class Hiisipeli : PhysicsGame
         pelaaja.Y = 200.0;
         pelaaja.IgnoresPhysicsLogics = true;
         pelaaja.Restitution = 0;
-        AddCollisionHandler(pelaaja, "hiisi", PelaajaanOsui);        
+        AddCollisionHandler(pelaaja, "hiisi", PelaajaanOsui);
 
         Add(pelaaja);
+
+        TileMap tiles = TileMap.FromStringArray(lines);
+
+        tiles.SetTileMethod('X', LuoSeinax, Color.DarkGray);
+        tiles.SetTileMethod('Y', LuoSeinay, Color.DarkGray);
+        tiles.SetTileMethod('H', LuoHiisi, Color.BrightGreen);
+
+
+        tiles.Execute(tileWidth, tileHeight);
 
     }
 
@@ -109,16 +110,16 @@ public class Hiisipeli : PhysicsGame
         Keyboard.Listen(Key.A, ButtonState.Pressed, SaadaNopeus, "Liikuta ritaria Vasemmalle", pelaaja, nopeusVasemmalle);
         Keyboard.Listen(Key.A, ButtonState.Released, SaadaNopeus, null, pelaaja, -nopeusVasemmalle);
 
-        Keyboard.Listen(Key.Up, ButtonState.Pressed, LyoMiekalla, null, 0.0, 70.0);
+        Keyboard.Listen(Key.Up, ButtonState.Pressed, LyoMiekalla, null, 0.0, 80.0);
         /// Keyboard.Listen(Key.Up, ButtonState.Released, PoistaMiekka, null, Miekka);
 
-        Keyboard.Listen(Key.Down, ButtonState.Pressed, LyoMiekalla, null, 0.0, -70.0);
+        Keyboard.Listen(Key.Down, ButtonState.Pressed, LyoMiekalla, null, 0.0, -80.0);
         /// Keyboard.Listen(Key.Down, ButtonState.Released, PoistaMiekka, null, Miekka);
 
-        Keyboard.Listen(Key.Left, ButtonState.Pressed, LyoMiekalla, null, -70.0, 0.0);
+        Keyboard.Listen(Key.Left, ButtonState.Pressed, LyoMiekalla, null, -80.0, 0.0);
         /// Keyboard.Listen(Key.Left, ButtonState.Released, PoistaMiekka, null, Miekka);
 
-        Keyboard.Listen(Key.Right, ButtonState.Pressed, LyoMiekalla, null, 70.0, 0.0);
+        Keyboard.Listen(Key.Right, ButtonState.Pressed, LyoMiekalla, null, 80.0, 0.0);
         /// Keyboard.Listen(Key.Right, ButtonState.Released, PoistaMiekka, null, Miekka);
     }
 
@@ -130,8 +131,9 @@ public class Hiisipeli : PhysicsGame
         if (pelaaja.Velocity.X < -300.0) pelaaja.Velocity = new Vector(-300.0, pelaaja.Velocity.Y);
         if (pelaaja.Velocity.Y > 300.0) pelaaja.Velocity = new Vector(pelaaja.Velocity.X, 300.0);
         if (pelaaja.Velocity.Y < -300.0) pelaaja.Velocity = new Vector(pelaaja.Velocity.X, -300.0);
-    }
 
+    }
+    
 
     /// <summary>
     /// Luodaan pituussuuntaan seinä
@@ -177,14 +179,21 @@ public class Hiisipeli : PhysicsGame
     /// <param name="vari"></param>
     private void LuoHiisi(Vector paikka, double x, double y, Color vari)
     {
-        PhysicsObject Hiisi = new PhysicsObject(60.0, 60.0);
+        Hiisi = new PhysicsObject(60.0, 60.0);
         Hiisi.Position = paikka;
         Hiisi.Color = vari;
         Hiisi.Shape = Shape.Triangle;
+        Hiisi.IgnoresPhysicsLogics = true;
+        Timer.CreateAndStart(0.1, HiidenNopeus);
         /// Hiisi.Image = "hiisi";
         Hiisi.Tag = "hiisi";
         Add(Hiisi);
         hiisia.Value += 1;
+    }
+
+    private void HiidenNopeus()
+    {
+        Hiisi.Velocity = new Vector(2 * pelaaja.X, 2 * pelaaja.Y);
     }
 
     private void TapaPelaaja(IPhysicsObject pelaaja)
@@ -232,10 +241,10 @@ public class Hiisipeli : PhysicsGame
 
         miekka.X = pelaaja.X + x;
         miekka.Y = pelaaja.Y + y;
-
         Timer.CreateAndStart(0.1, miekka.Destroy);
         Remove(miekka);
     }
+
     // TeeMiekka aliohjelma tähän
     PhysicsObject TeeMiekka()
     {
