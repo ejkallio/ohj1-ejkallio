@@ -12,17 +12,19 @@ public class Hiisipeli : PhysicsGame
                   "                        ",
                   "Y                      Y",
                   "                        ",
-                  "              H         ",
-                  "   H                    ",
-                  "Y          H            ",
                   "                        ",
-                  "                  H     ",
-                  "         H              ",
+                  "                 H      ",
+                  "Y      H                ",
+                  "                        ",
+                  "                  J     ",
+                  "         J              ",
                   "Y                      Y",
                   "                        ",
                   "     X      X      X    ",
                   };
     
+    // lisää kenttiä!!!
+
     private static readonly int tileWidth = 1000 / lines[0].Length;
     private static readonly int tileHeight = 800 / lines.Length;
 
@@ -32,7 +34,8 @@ public class Hiisipeli : PhysicsGame
     Vector nopeusVasemmalle = new Vector(-300, -0);
 
     PhysicsObject pelaaja;
-    PhysicsObject Hiisi;
+    PhysicsObject hiisi;
+    PhysicsObject jousihiisi;
     IntMeter tapot;
     IntMeter hiisia;
     public override void Begin()
@@ -50,6 +53,7 @@ public class Hiisipeli : PhysicsGame
     private void LuoKentta()
     {
         Level.Background.CreateGradient(Color.White, Color.Black);
+        
 
         PhysicsObject YlaReuna = Level.CreateTopBorder();
         YlaReuna.IsVisible = false;
@@ -84,10 +88,13 @@ public class Hiisipeli : PhysicsGame
 
         tiles.SetTileMethod('X', LuoSeinax, Color.DarkGray);
         tiles.SetTileMethod('Y', LuoSeinay, Color.DarkGray);
-        tiles.SetTileMethod('H', LuoHiisi, Color.BrightGreen);
+        tiles.SetTileMethod('H', LuoHiisi, Color.ForestGreen);
+        tiles.SetTileMethod('J', LuoJousihiisi, Color.BrightGreen);
 
 
         tiles.Execute(tileWidth, tileHeight);
+
+        /// Timer.CreateAndStart(0.1, HiidenNopeus);
 
     }
 
@@ -179,21 +186,80 @@ public class Hiisipeli : PhysicsGame
     /// <param name="vari"></param>
     private void LuoHiisi(Vector paikka, double x, double y, Color vari)
     {
-        Hiisi = new PhysicsObject(60.0, 60.0);
-        Hiisi.Position = paikka;
-        Hiisi.Color = vari;
-        Hiisi.Shape = Shape.Triangle;
-        Hiisi.IgnoresPhysicsLogics = true;
-        Timer.CreateAndStart(0.1, HiidenNopeus);
+        hiisi = new PhysicsObject(60.0, 60.0);
+        hiisi.Position = paikka;
+        hiisi.Color = vari;
+        hiisi.Shape = Shape.Triangle;
+        hiisi.IgnoresPhysicsLogics = true;
+        hiisi.CanRotate = false;
+        hiisi.Tag = "hiisi";
+        hiisi.Brain = Aivot(pelaaja);
+        /// tänne vielä aivot!!!
         /// Hiisi.Image = "hiisi";
-        Hiisi.Tag = "hiisi";
-        Add(Hiisi);
+        Add(hiisi);
         hiisia.Value += 1;
     }
 
-    private void HiidenNopeus()
+    private FollowerBrain Aivot(PhysicsObject pelaaja)
     {
-        Hiisi.Velocity = new Vector(2 * pelaaja.X, 2 * pelaaja.Y);
+        FollowerBrain aivot = new FollowerBrain(pelaaja);
+        aivot.Speed = 150.0;
+       
+        return aivot;
+    }
+
+
+    /// <summary>
+    /// tähän 2. hiisityyppi (ampuva hiisi)
+    /// </summary>
+    private void LuoJousihiisi(Vector paikka, double x, double y, Color vari)
+    {
+        jousihiisi = new PhysicsObject(60.0, 60.0);
+        jousihiisi.Position = paikka;
+        jousihiisi.Color = vari;
+        jousihiisi.Shape = Shape.Triangle;
+        jousihiisi.CanRotate = false;
+        jousihiisi.Tag = "hiisi";
+        jousihiisi.Brain = AmpujaAivot(pelaaja);
+        Timer.CreateAndStart(2.0, Ampuu);
+        Add(jousihiisi);
+        hiisia.Value += 1;
+    }
+
+    private FollowerBrain AmpujaAivot(PhysicsObject pelaaja)
+    {
+        FollowerBrain aivot = new FollowerBrain(pelaaja);
+        aivot.Speed = 100.0;
+        aivot.DistanceClose = 400.0;
+        aivot.StopWhenTargetClose = true;
+        ///aivot.TargetClose += HiisiAmpuu;
+        return aivot;
+
+    }
+
+    private void HiisiAmpuu()
+    {
+        Timer.CreateAndStart(5.0, Ampuu);
+    }
+
+    private void Ampuu()
+    {
+        PhysicsObject nuoli = HiidenNuoli(jousihiisi);
+        Add(nuoli);
+    }
+
+
+    private PhysicsObject HiidenNuoli(PhysicsObject jousihiisi)
+    {
+        PhysicsObject nuoli = new PhysicsObject(10.0, 10.0);
+        nuoli.Shape = Shape.Circle;
+        nuoli.Color = Color.Red;
+        nuoli.X = jousihiisi.X;
+        nuoli.Y = jousihiisi.Y;
+        nuoli.Velocity = new Vector(pelaaja.X, pelaaja.Y);
+        nuoli.IgnoresCollisionWith(jousihiisi);
+        nuoli.IgnoresCollisionWith(hiisi);
+        return nuoli;
     }
 
     private void TapaPelaaja(IPhysicsObject pelaaja)
@@ -246,11 +312,11 @@ public class Hiisipeli : PhysicsGame
     }
 
     // TeeMiekka aliohjelma tähän
-    PhysicsObject TeeMiekka()
+    private PhysicsObject TeeMiekka()
     {
         PhysicsObject miekka = PhysicsObject.CreateStaticObject(40.0, 60.0);
         miekka.Shape = Shape.Triangle;
-        miekka.Color = Color.DarkRed;
+        miekka.Color = Color.SkyBlue;
         miekka.Tag = "miekka";
         miekka.IgnoresPhysicsLogics = true;
         miekka.Restitution = 0;
@@ -260,7 +326,7 @@ public class Hiisipeli : PhysicsGame
         return miekka;
     }
 
-    PhysicsObject LuoKruunu()
+    private PhysicsObject LuoKruunu()
     {
         PhysicsObject kruunu = PhysicsObject.CreateStaticObject(40.0, 20.0);
         kruunu.Shape = Shape.Rectangle;
