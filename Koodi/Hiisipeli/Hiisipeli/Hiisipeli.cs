@@ -195,10 +195,10 @@ public class Hiisipeli : PhysicsGame
         Keyboard.Listen(Key.A, ButtonState.Pressed, SaadaNopeus, "Liikuta ritaria Vasemmalle", pelaaja, nopeusVasemmalle);
         Keyboard.Listen(Key.A, ButtonState.Released, SaadaNopeus, null, pelaaja, -nopeusVasemmalle);
 
-        Keyboard.Listen(Key.Up, ButtonState.Pressed, LyoMiekalla, null, 0.0, 80.0);
+        Keyboard.Listen(Key.Up, ButtonState.Pressed, LyoMiekalla, null, 0.0, 95.0);
         /// Keyboard.Listen(Key.Up, ButtonState.Released, PoistaMiekka, null, Miekka);
 
-        Keyboard.Listen(Key.Down, ButtonState.Pressed, LyoMiekalla, null, 0.0, -80.0);
+        Keyboard.Listen(Key.Down, ButtonState.Pressed, LyoMiekalla, null, 0.0, -95.0);
         /// Keyboard.Listen(Key.Down, ButtonState.Released, PoistaMiekka, null, Miekka);
 
         Keyboard.Listen(Key.Left, ButtonState.Pressed, LyoMiekalla, null, -80.0, 0.0);
@@ -263,7 +263,7 @@ public class Hiisipeli : PhysicsGame
         rikottavaseinay.Color = vari;
         rikottavaseinay.Restitution = 0;
         rikottavaseinay.Tag = "ovi";
-        Add(rikottavaseinay);
+        Add(rikottavaseinay, -1);
     }
 
 
@@ -274,7 +274,7 @@ public class Hiisipeli : PhysicsGame
         rikottavaseinax.Color = vari;
         rikottavaseinax.Restitution = 0;
         rikottavaseinax.Tag = "ovi";
-        Add(rikottavaseinax);
+        Add(rikottavaseinax, -1);
     }
 
 
@@ -340,14 +340,6 @@ public class Hiisipeli : PhysicsGame
 
     }
 
-
-    private void HiisiAmpuu()
-    {
-        Timer.Limit(Ampuu, 2.0);
-        Timer.CreateAndStart(5.0, Ampuu);
-    }
-
-
     private void Ampuu()
     {
         Timer.Limit(Ampuu, 2.0);
@@ -376,7 +368,7 @@ public class Hiisipeli : PhysicsGame
     {
         Explosion kuolema = new Explosion(pelaaja.Width * 2);
         kuolema.Position = pelaaja.Position;
-        kuolema.UseShockWave = false;
+        kuolema.UseShockWave = true;
         Add(kuolema);
         Remove(pelaaja);
         Label kuolemateksti = new Label("Kuolit! Paina R aloittaaksesi uuden pelin.");
@@ -494,6 +486,9 @@ public class Hiisipeli : PhysicsGame
         tapot.Value += 1;
         if (tapot.Value == hiisia.Value && kenttanro != 4)
         {
+            // TÄMÄ SILMUKAKSI !!!
+            //!!!
+            //!!!
             rikottavaseinax.Destroy();
             rikottavaseinay.Destroy();
         }
