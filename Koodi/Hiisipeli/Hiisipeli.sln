@@ -5,10 +5,6 @@ VisualStudioVersion = 16.0.31624.102
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hiisipeli", "Hiisipeli\Hiisipeli.csproj", "{07B54B16-3480-4CCB-B604-422AE97CB3DD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lumiukko", "..\..\..\..\kurssit\ohj1\paate\paate1\Lumiukko\Lumiukko.csproj", "{385D181A-3A1C-45FD-9379-05231148C156}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ponnng", "..\..\..\..\kurssit\ohj1\viikko4\Ponnng\Ponnng\Ponnng.csproj", "{91019AAC-B52A-4CC4-B719-546FE9D5F011}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,14 +15,6 @@ Global
 		{07B54B16-3480-4CCB-B604-422AE97CB3DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{07B54B16-3480-4CCB-B604-422AE97CB3DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{07B54B16-3480-4CCB-B604-422AE97CB3DD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{385D181A-3A1C-45FD-9379-05231148C156}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{385D181A-3A1C-45FD-9379-05231148C156}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{385D181A-3A1C-45FD-9379-05231148C156}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{385D181A-3A1C-45FD-9379-05231148C156}.Release|Any CPU.Build.0 = Release|Any CPU
-		{91019AAC-B52A-4CC4-B719-546FE9D5F011}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{91019AAC-B52A-4CC4-B719-546FE9D5F011}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{91019AAC-B52A-4CC4-B719-546FE9D5F011}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{91019AAC-B52A-4CC4-B719-546FE9D5F011}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
