@@ -7,8 +7,8 @@ using System.Collections.Generic;
 
 public class Hiisipeli : PhysicsGame
 {
-    private static readonly String[] lines = {
-                  "     X      X      X    ",
+    private static readonly String[] lines_1 = {
+                  "     X      XR     X    ",
                   "                        ",
                   "Y           P          Y",
                   "                        ",
@@ -46,7 +46,7 @@ public class Hiisipeli : PhysicsGame
                   "                        ",
                   "    H                   ",
                   "                 H      ",
-                  "S    J                 Y",
+                  "Y    J                 Y",
                   "                        ",
                   "                  J     ",
                   "       H                ",
@@ -54,11 +54,43 @@ public class Hiisipeli : PhysicsGame
                   "                        ",
                   "     X      R      X    ",
                   };
+
+    private static readonly String[] lines_4 = {
+                  "     X      R      X    ",
+                  "                        ",
+                  "Y                      Y",
+                  "                        ",
+                  "                        ",
+                  "                        ",
+                  "Y                      Y",
+                  "                        ",
+                  "    H     H    H    H   ",
+                  "       H                ",
+                  "Y            J    H    Y",
+                  "                        ",
+                  "     X      X      X    ",
+                  };
+
+    private static readonly String[] lines_5 = {
+                  "     X      X      X    ",
+                  "                        ",
+                  "Y                      Y",
+                  "                        ",
+                  "                        ",
+                  "                        ",
+                  "Y                      Y",
+                  "    H               H   ",
+                  "                        ",
+                  "        H   J   H       ",
+                  "Y    J             J   Y",
+                  "                        ",
+                  "     X      X      X    ",
+                  };
     // lisää kenttiä!!!
 
-    
-    private static readonly int tileWidth = 1000 / lines[0].Length;
-    private static readonly int tileHeight = 800 / lines.Length;
+
+    private static readonly int tileWidth = 1000 / lines_1[0].Length;
+    private static readonly int tileHeight = 800 / lines_1.Length;
 
     Vector nopeusYlos = new Vector(0, 300);
     Vector nopeusAlas = new Vector(0, -300);  
@@ -72,22 +104,20 @@ public class Hiisipeli : PhysicsGame
     PhysicsObject rikottavaseinay;
     IntMeter tapot;
     IntMeter hiisia;
+    int kenttanro = 0;
     public override void Begin()
     {
-        ClearGameObjects();
-        ClearControls();
-        LisaaLaskurit();
-        LuoKentta();
-        LuoOhjaus();
+        SeuraavaKentta();       
     }
 
     /// <summary>
     /// Luodaan kenttä, määritellään pelaaja- ja miekkaoliot
     /// </summary>
-    private void LuoKentta()
+    private void SeuraavaKentta()
     {
-        Level.Background.CreateGradient(Color.White, Color.Black);
-        
+        ClearAll();
+
+        LisaaLaskurit();
 
         PhysicsObject YlaReuna = Level.CreateTopBorder();
         YlaReuna.IsVisible = false;
@@ -105,11 +135,6 @@ public class Hiisipeli : PhysicsGame
         OikeaReuna.IsVisible = false;
         OikeaReuna.Tag = "reuna";
 
-
-        /// LuoSeinay(Level.Left, 0.0);
-        /// LuoSeinay(Level.Right, 0.0);
-        /// LuoSeinax(0.0, Level.Bottom);
-        /// LuoSeinax(0.0, Level.Top);
         pelaaja = new PhysicsObject(60.0, 60.0);
         pelaaja.Shape = Shape.Circle;
         pelaaja.Color = Color.Black;
@@ -118,24 +143,29 @@ public class Hiisipeli : PhysicsGame
         pelaaja.IgnoresPhysicsLogics = true;
         pelaaja.Restitution = 0;
         AddCollisionHandler(pelaaja, "hiisi", PelaajaanOsui);
-        AddCollisionHandler(pelaaja, "nuoli", PelaajaanOsui);
+        // AddCollisionHandler(pelaaja, "nuoli", PelaajaanOsui);
         AddCollisionHandler(pelaaja, "reuna", SeuraavaTaso);
-
-
         Add(pelaaja);
 
+        LuoKentta();
+        LuoOhjaus();
+        Level.Background.CreateGradient(Color.White, Color.Black);
+        
+
+    }
+
+
+    private void LuoKentta()
+    {
         List<String[]> tasot = new List<String[]>();
 
-        tasot.Add(lines);
+        tasot.Add(lines_1);
         tasot.Add(lines_2);
         tasot.Add(lines_3);
+        tasot.Add(lines_4);
+        tasot.Add(lines_5);
 
-        bool ekahuone = true;
-
-
-        TileMap tiles = TileMap.FromStringArray(tasot[RandomGen.NextInt(3)]);
-
-        ///tiles.SetTileMethod('P', LuoPelaaja, Color.Black);
+        TileMap tiles = TileMap.FromStringArray(tasot[kenttanro]);
         tiles.SetTileMethod('X', LuoSeinax, Color.DarkGray);
         tiles.SetTileMethod('Y', LuoSeinay, Color.DarkGray);
         tiles.SetTileMethod('H', LuoHiisi, Color.ForestGreen);
@@ -143,15 +173,13 @@ public class Hiisipeli : PhysicsGame
         tiles.SetTileMethod('R', LuoRikottavaSeinax, Color.Brown);
         tiles.SetTileMethod('S', LuoRikottavaSeinay, Color.Brown);
 
-
-        
         tiles.Execute(tileWidth, tileHeight);
     }
 
     private void LuoOhjaus()
     {
         Keyboard.Listen(Key.F1, ButtonState.Pressed, ShowControlHelp, "Näytä kontrollit");
-        Keyboard.Listen(Key.R, ButtonState.Pressed, Begin, "Uusi Peli");
+        Keyboard.Listen(Key.R, ButtonState.Pressed, SeuraavaKentta, "Uusi Peli");
         PhoneBackButton.Listen(ConfirmExit, "Lopeta peli");
         Keyboard.Listen(Key.Escape, ButtonState.Pressed, ConfirmExit, "Lopeta peli"); 
 
@@ -167,10 +195,10 @@ public class Hiisipeli : PhysicsGame
         Keyboard.Listen(Key.A, ButtonState.Pressed, SaadaNopeus, "Liikuta ritaria Vasemmalle", pelaaja, nopeusVasemmalle);
         Keyboard.Listen(Key.A, ButtonState.Released, SaadaNopeus, null, pelaaja, -nopeusVasemmalle);
 
-        Keyboard.Listen(Key.Up, ButtonState.Pressed, LyoMiekalla, null, 0.0, 80.0);
+        Keyboard.Listen(Key.Up, ButtonState.Pressed, LyoMiekalla, null, 0.0, 95.0);
         /// Keyboard.Listen(Key.Up, ButtonState.Released, PoistaMiekka, null, Miekka);
 
-        Keyboard.Listen(Key.Down, ButtonState.Pressed, LyoMiekalla, null, 0.0, -80.0);
+        Keyboard.Listen(Key.Down, ButtonState.Pressed, LyoMiekalla, null, 0.0, -95.0);
         /// Keyboard.Listen(Key.Down, ButtonState.Released, PoistaMiekka, null, Miekka);
 
         Keyboard.Listen(Key.Left, ButtonState.Pressed, LyoMiekalla, null, -80.0, 0.0);
@@ -209,6 +237,7 @@ public class Hiisipeli : PhysicsGame
         Add(Seina);
     }
 
+
     /// <summary>
     /// Luodaan leveyssuuntaan seinä
     /// </summary>
@@ -234,7 +263,7 @@ public class Hiisipeli : PhysicsGame
         rikottavaseinay.Color = vari;
         rikottavaseinay.Restitution = 0;
         rikottavaseinay.Tag = "ovi";
-        Add(rikottavaseinay);
+        Add(rikottavaseinay, -1);
     }
 
 
@@ -245,25 +274,9 @@ public class Hiisipeli : PhysicsGame
         rikottavaseinax.Color = vari;
         rikottavaseinax.Restitution = 0;
         rikottavaseinax.Tag = "ovi";
-        Add(rikottavaseinax);
+        Add(rikottavaseinax, -1);
     }
 
-
-    private void LuoPelaaja(Vector paikka, double x, double y, Color vari)
-    {
-        pelaaja = new PhysicsObject(60.0, 60.0);
-        pelaaja.Shape = Shape.Circle;
-        pelaaja.Color = Color.Black;
-        pelaaja.X = x;
-        pelaaja.Y = y;
-        pelaaja.Image = LoadImage("ritari1-export.gif");
-        pelaaja.IgnoresPhysicsLogics = true;
-        pelaaja.Restitution = 0;
-        AddCollisionHandler(pelaaja, "hiisi", PelaajaanOsui);
-        AddCollisionHandler(pelaaja, "nuoli", PelaajaanOsui);
-
-        Add(pelaaja);
-    }
 
     /// <summary>
     /// Luodaan pelin vihollinen eli hiisi,
@@ -283,11 +296,11 @@ public class Hiisipeli : PhysicsGame
         hiisi.CanRotate = false;
         hiisi.Tag = "hiisi";
         hiisi.Brain = Aivot(pelaaja);
-        /// tänne vielä aivot!!!
         /// Hiisi.Image = "hiisi";
         Add(hiisi);
         hiisia.Value += 1;
     }
+
 
     private FollowerBrain Aivot(PhysicsObject pelaaja)
     {
@@ -310,10 +323,11 @@ public class Hiisipeli : PhysicsGame
         jousihiisi.CanRotate = false;
         jousihiisi.Tag = "hiisi";
         jousihiisi.Brain = AmpujaAivot(pelaaja);
-        Timer.CreateAndStart(2.0, Ampuu);
+        ///Timer.CreateAndStart(2.0, Ampuu);
         Add(jousihiisi);
         hiisia.Value += 1;
     }
+
 
     private FollowerBrain AmpujaAivot(PhysicsObject pelaaja)
     {
@@ -321,18 +335,14 @@ public class Hiisipeli : PhysicsGame
         aivot.Speed = 100.0;
         aivot.DistanceClose = 400.0;
         aivot.StopWhenTargetClose = true;
-        ///aivot.TargetClose += HiisiAmpuu;
+        aivot.TargetClose += Ampuu;
         return aivot;
 
     }
 
-    private void HiisiAmpuu()
-    {
-        Timer.CreateAndStart(5.0, Ampuu);
-    }
-
     private void Ampuu()
     {
+        Timer.Limit(Ampuu, 2.0);
         PhysicsObject nuoli = HiidenNuoli(jousihiisi);
         Add(nuoli);
         Timer.CreateAndStart(2.0, nuoli.Destroy);
@@ -353,11 +363,12 @@ public class Hiisipeli : PhysicsGame
         return nuoli;
     }
 
+
     private void TapaPelaaja(IPhysicsObject pelaaja)
     {
         Explosion kuolema = new Explosion(pelaaja.Width * 2);
         kuolema.Position = pelaaja.Position;
-        kuolema.UseShockWave = false;
+        kuolema.UseShockWave = true;
         Add(kuolema);
         Remove(pelaaja);
         Label kuolemateksti = new Label("Kuolit! Paina R aloittaaksesi uuden pelin.");
@@ -365,6 +376,7 @@ public class Hiisipeli : PhysicsGame
         kuolemateksti.Y = 100.0;
         Add(kuolemateksti);
     }
+
 
     private void TapaHiisi(IPhysicsObject hiisi)
     {
@@ -375,23 +387,27 @@ public class Hiisipeli : PhysicsGame
         Remove(hiisi);
     }
 
+
     private void PelaajaanOsui(PhysicsObject pelaaja, PhysicsObject hiisi)
     {
         TapaPelaaja(pelaaja);
+        kenttanro = 0;
     }
+
 
     private void HiiteenOsui(PhysicsObject Miekka, PhysicsObject hiisi)
     {
         TapaHiisi(hiisi);
     }
 
+
     private void SeuraavaTaso(PhysicsObject pelaaja, PhysicsObject Reuna)
     {
-        Begin();
-        pelaaja.X = Reuna.X + 10.0;
-        pelaaja.Y = Reuna.Y;
+        kenttanro++;
+        SeuraavaKentta();
     }
-    
+
+
     /// <summary>
     /// Luodaan miekanlyönti joka tapahtuu nuolinäppäimistä
     /// </summary>
@@ -413,6 +429,7 @@ public class Hiisipeli : PhysicsGame
         Remove(miekka);
     }
 
+
     // TeeMiekka aliohjelma tähän
     private PhysicsObject TeeMiekka()
     {
@@ -428,6 +445,7 @@ public class Hiisipeli : PhysicsGame
         return miekka;
     }
 
+
     private PhysicsObject LuoKruunu()
     {
         PhysicsObject kruunu = PhysicsObject.CreateStaticObject(40.0, 20.0);
@@ -438,12 +456,14 @@ public class Hiisipeli : PhysicsGame
         return kruunu;
     }
 
+
     IntMeter LuoTappoLaskuri()
     {
         IntMeter laskuri = new IntMeter(0);
         
         return laskuri;
     }
+
 
     IntMeter LuoHiisiLaskuri()
     {
@@ -452,28 +472,32 @@ public class Hiisipeli : PhysicsGame
         return laskuri;
     }
 
+
     private void LisaaLaskurit()
     {
         tapot = LuoTappoLaskuri();
         hiisia = LuoHiisiLaskuri();
     }
 
+
     private void KasittelePisteet(PhysicsObject miekka, PhysicsObject kohde)
     {
         int onkovika = RandomGen.NextInt(5);
         tapot.Value += 1;
-        if (tapot.Value == hiisia.Value)
+        if (tapot.Value == hiisia.Value && kenttanro != 4)
         {
+            // TÄMÄ SILMUKAKSI !!!
+            //!!!
+            //!!!
             rikottavaseinax.Destroy();
-            rikottavaseinax.Destroy();
-            rikottavaseinay.Destroy();
             rikottavaseinay.Destroy();
         }
-        if (onkovika == 4 && tapot.Value == hiisia.Value)
+        if (kenttanro == 4 && tapot.Value == hiisia.Value)
         {
             LuoKruunu();
         }
     }
+
 
     private void KoskeKruunua(PhysicsObject pelaaja, PhysicsObject kruunu)
     {
@@ -482,6 +506,8 @@ public class Hiisipeli : PhysicsGame
         voittoteksti.TextColor = Color.Black;
         voittoteksti.Y = 100.0;
         Add(voittoteksti);
+
+        Timer.CreateAndStart(5.0, Exit);
     }
 
 }
