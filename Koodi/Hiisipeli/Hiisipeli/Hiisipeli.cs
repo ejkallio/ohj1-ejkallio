@@ -5,32 +5,47 @@ using Jypeli.Widgets;
 using System;
 using System.Collections.Generic;
 
+///
+/// @author ejkallio
+/// @version 8.12.2021
+/// <summary>
+/// Peli, jossa edetään huoneesta huoneeseen ja tuhotaan
+/// hyökkäävät viholliset. Lopputavoitteena löytää kruunu, jota
+/// koskettamalla voitetaan peli.
+/// </summary>
+/// <remarks>
+/// To-do:
+/// - Jousihiisien ampuminen kuntoon
+/// - Miekan grafiikan/muodon parantelu
+/// - Parempi grafiikka
+/// - Lista nopeimmista ajoista
+/// </remarks>
 public class Hiisipeli : PhysicsGame
 {
     private static readonly String[] lines_1 = {
-                  "     X      XR     X    ",
+                  "     X      X      X    ",
                   "                        ",
                   "Y           P          Y",
                   "                        ",
                   "                        ",
-                  "                 H      ",
-                  "Y      H               S",
+                  "                 H     S",
+                  "Y      H               Y",
                   "                        ",
                   "                  J     ",
                   "         J              ",
                   "Y                      Y",
                   "                        ",
-                  "     X      X      X    ",
+                  "     X      R      X    ",
                   };
 
     private static readonly String[] lines_2 = {
-                  "     X      R      X    ",
+                  "     X      XR     X    ",
                   "                        ",
                   "Y  P                   Y",
                   "                  J     ",
                   "                        ",
                   "                 H      ",
-                  "S                      S",
+                  "Y                      S",
                   "       H                ",
                   "                  J     ",
                   "              H         ",
@@ -40,12 +55,12 @@ public class Hiisipeli : PhysicsGame
                   };
 
     private static readonly String[] lines_3 = {
-                  "     X      R      X    ",
+                  "     X      X      X    ",
                   "                        ",
                   "Y   P                  Y",
                   "                        ",
                   "    H                   ",
-                  "                 H      ",
+                  "S                H      ",
                   "Y    J                 Y",
                   "                        ",
                   "                  J     ",
@@ -56,13 +71,13 @@ public class Hiisipeli : PhysicsGame
                   };
 
     private static readonly String[] lines_4 = {
-                  "     X      R      X    ",
+                  "     X      XR     X    ",
                   "                        ",
                   "Y                      Y",
                   "                        ",
                   "                        ",
                   "                        ",
-                  "Y                      Y",
+                  "S                      Y",
                   "                        ",
                   "    H     H    H    H   ",
                   "       H                ",
@@ -105,6 +120,11 @@ public class Hiisipeli : PhysicsGame
     IntMeter tapot;
     IntMeter hiisia;
     int kenttanro = 0;
+
+
+    /// <summary>
+    /// Aloitusvalikko josta päästään varsinaiseen peliin
+    /// </summary>
     public override void Begin()
     {
         MultiSelectWindow alkuValikko = new MultiSelectWindow("Hiisipeli", "Aloita peli", "Lopeta");
@@ -114,6 +134,7 @@ public class Hiisipeli : PhysicsGame
         Level.BackgroundColor = Color.Gray;
         Add(alkuValikko);               
     }
+
 
     /// <summary>
     /// Luodaan kenttä, määritellään pelaaja- ja miekkaoliot
@@ -158,6 +179,9 @@ public class Hiisipeli : PhysicsGame
     }
 
 
+    /// <summary>
+    /// Määritellään pelin kentät 
+    /// </summary>
     private void LuoKentta()
     {
         List<String[]> tasot = new List<String[]>();
@@ -180,6 +204,9 @@ public class Hiisipeli : PhysicsGame
     }
 
 
+    /// <summary>
+    /// Luodaan pelin ohjaukset
+    /// </summary>
     private void LuoOhjaus()
     {
         Keyboard.Listen(Key.F1, ButtonState.Pressed, ShowControlHelp, "Näytä kontrollit");
@@ -200,21 +227,19 @@ public class Hiisipeli : PhysicsGame
         Keyboard.Listen(Key.A, ButtonState.Released, SaadaNopeus, null, pelaaja, -nopeusVasemmalle);
 
         Keyboard.Listen(Key.Up, ButtonState.Pressed, LyoMiekalla, null, 0.0, 95.0, 0.0);
-        /// Keyboard.Listen(Key.Up, ButtonState.Released, PoistaMiekka, null, Miekka);
 
         Keyboard.Listen(Key.Down, ButtonState.Pressed, LyoMiekalla, null, 0.0, -95.0, 180.0);
-        /// Keyboard.Listen(Key.Down, ButtonState.Released, PoistaMiekka, null, Miekka);
 
         Keyboard.Listen(Key.Left, ButtonState.Pressed, LyoMiekalla, null, -80.0, 0.0, -90.0);
-        /// Keyboard.Listen(Key.Left, ButtonState.Released, PoistaMiekka, null, Miekka);
 
         Keyboard.Listen(Key.Right, ButtonState.Pressed, LyoMiekalla, null, 80.0, 0.0, 90.0);
-        /// Keyboard.Listen(Key.Right, ButtonState.Released, PoistaMiekka, null, Miekka);
     }
 
 
     /// <summary>
     /// Mahdollistetaan pelaajan liikkuminen 8 suuntaan
+    /// (Rikkoo tällä hetkellä pelin fysiikkaa sen verran että pelaajahahmo lähtee törmättyään
+    /// esineeseen poukkoilemaan vastakkaiseen suuntaan.)
     /// </summary>
     /// <param name="pelaaja"></param>
     /// <param name="nopeus"></param>
@@ -264,6 +289,7 @@ public class Hiisipeli : PhysicsGame
         Add(Seina);
     }
 
+
     /// <summary>
     /// Ovi pituussuunnassa
     /// </summary>
@@ -280,6 +306,7 @@ public class Hiisipeli : PhysicsGame
         rikottavaseinay.Tag = "ovi";
         Add(rikottavaseinay, -1);
     }
+
 
     /// <summary>
     /// Ovi leveyssuunnassa
@@ -317,7 +344,7 @@ public class Hiisipeli : PhysicsGame
         hiisi.CanRotate = false;
         hiisi.Tag = "hiisi";
         hiisi.Brain = Aivot(pelaaja);
-        /// Hiisi.Image = "hiisi";
+        // hiisi.Image = ;
         Add(hiisi);
         hiisia.Value += 1;
     }
@@ -372,6 +399,10 @@ public class Hiisipeli : PhysicsGame
     }
 
 
+    /// <summary>
+    /// Aliohjelma jonka on tarkoitus mahdollistaa jousihiisien
+    /// hyökkäämisen ampumalla.
+    /// </summary>
     private void Ampuu()
     {
         // Timer.Limit(Ampuu, 2.0);
@@ -383,6 +414,11 @@ public class Hiisipeli : PhysicsGame
     }
 
 
+    /// <summary>
+    /// Funktio jossa määritellään jousihiisien käyttämät ammukset.
+    /// </summary>
+    /// <param name="jousihiisi"></param>
+    /// <returns></returns>
     private PhysicsObject HiidenNuoli(PhysicsObject jousihiisi)
     {
         PhysicsObject nuoli = new PhysicsObject(10.0, 10.0);
@@ -400,6 +436,10 @@ public class Hiisipeli : PhysicsGame
     }
 
 
+    /// <summary>
+    /// Luodaan räjähdys joka tapahtuu pelaajan tuhoutuessa
+    /// </summary>
+    /// <param name="pelaaja"></param>
     private void TapaPelaaja(IPhysicsObject pelaaja)
     {
         Explosion kuolema = new Explosion(pelaaja.Width * 2);
@@ -414,6 +454,10 @@ public class Hiisipeli : PhysicsGame
     }
 
 
+    /// <summary>
+    /// Luodaan räjähdys joka tapahtuu vihollisen tuhoutuessa
+    /// </summary>
+    /// <param name="hiisi"></param>
     private void TapaHiisi(IPhysicsObject hiisi)
     {
         Explosion kuolema = new Explosion(hiisi.Width * 2);
@@ -424,6 +468,11 @@ public class Hiisipeli : PhysicsGame
     }
 
 
+    /// <summary>
+    /// Käsitellään vihollisen osumista pelaajaan
+    /// </summary>
+    /// <param name="pelaaja"></param>
+    /// <param name="hiisi"></param>
     private void PelaajaanOsui(PhysicsObject pelaaja, PhysicsObject hiisi)
     {
         TapaPelaaja(pelaaja);
@@ -431,12 +480,22 @@ public class Hiisipeli : PhysicsGame
     }
 
 
+    /// <summary>
+    /// Käsitellään miekan osumista viholliseen
+    /// </summary>
+    /// <param name="Miekka"></param>
+    /// <param name="hiisi"></param>
     private void HiiteenOsui(PhysicsObject Miekka, PhysicsObject hiisi)
     {
         TapaHiisi(hiisi);
     }
 
 
+    /// <summary>
+    /// Kentän vaihtumista käsittelevä aliohjelma
+    /// </summary>
+    /// <param name="pelaaja"></param>
+    /// <param name="Reuna"></param>
     private void SeuraavaTaso(PhysicsObject pelaaja, PhysicsObject Reuna)
     {
         kenttanro++;
@@ -462,11 +521,14 @@ public class Hiisipeli : PhysicsGame
     }
 
 
-    // TeeMiekka aliohjelma tähän
+    /// <summary>
+    /// Funktio joka palauttaa miekka-fysiikkaolion 
+    /// </summary>
+    /// <returns></returns>
     private PhysicsObject TeeMiekka()
     {
         PhysicsObject miekka = PhysicsObject.CreateStaticObject(40.0, 60.0);
-        miekka.Shape = Shape.Circle;
+        miekka.Shape = Shape.Triangle;
         miekka.Color = Color.SkyBlue;
         miekka.Tag = "miekka";
         miekka.IgnoresPhysicsLogics = true;
@@ -478,6 +540,10 @@ public class Hiisipeli : PhysicsGame
     }
 
 
+    /// <summary>
+    /// Funktio luo peliin kruunun jota koskettamalla voitetaan peli.
+    /// </summary>
+    /// <returns></returns>
     private PhysicsObject LuoKruunu()
     {
         PhysicsObject kruunu = PhysicsObject.CreateStaticObject(40.0, 20.0);
@@ -489,7 +555,11 @@ public class Hiisipeli : PhysicsGame
     }
 
 
-    IntMeter LuoTappoLaskuri()
+    /// <summary>
+    /// Laskuri joka laskee pelaajan tuhoamat viholliset
+    /// </summary>
+    /// <returns></returns>
+    private IntMeter LuoTappoLaskuri()
     {
         IntMeter laskuri = new IntMeter(0);
         
@@ -497,7 +567,11 @@ public class Hiisipeli : PhysicsGame
     }
 
 
-    IntMeter LuoHiisiLaskuri()
+    /// <summary>
+    /// Laskuri joka laskee jokaisen kentän vihollismäärän
+    /// </summary>
+    /// <returns></returns>
+     private IntMeter LuoHiisiLaskuri()
     {
         IntMeter laskuri = new IntMeter(0);
 
@@ -505,6 +579,9 @@ public class Hiisipeli : PhysicsGame
     }
 
 
+    /// <summary>
+    /// Määritellään laskurit
+    /// </summary>
     private void LisaaLaskurit()
     {
         tapot = LuoTappoLaskuri();
@@ -512,19 +589,21 @@ public class Hiisipeli : PhysicsGame
     }
 
 
+    /// <summary>
+    /// Miekan osumista viholliseen käsittelevä aliohjelma
+    /// </summary>
+    /// <param name="miekka"></param>
+    /// <param name="kohde"></param>
     private void KasittelePisteet(PhysicsObject miekka, PhysicsObject kohde)
     {
         tapot.Value += 1;
         if (tapot.Value == hiisia.Value && kenttanro != 4)
         {
-<<<<<<< HEAD
             // TÄMÄ SILMUKAKSI !!!
             //!!!
             //!!!
             Remove(rikottavaseinax);
             Remove(rikottavaseinay);
-=======
->>>>>>> de33d3f8c9998406d3f36e7896293c060be1f331
             Remove(rikottavaseinax);
             Remove(rikottavaseinay);
         }
