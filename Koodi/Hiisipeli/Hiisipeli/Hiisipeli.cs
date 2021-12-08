@@ -489,8 +489,10 @@ public class Hiisipeli : PhysicsGame
             // TÄMÄ SILMUKAKSI !!!
             //!!!
             //!!!
-            rikottavaseinax.Destroy();
-            rikottavaseinay.Destroy();
+            Remove(rikottavaseinax);
+            Remove(rikottavaseinay);
+            Remove(rikottavaseinax);
+            Remove(rikottavaseinay);
         }
         if (kenttanro == 4 && tapot.Value == hiisia.Value)
         {
