@@ -107,7 +107,12 @@ public class Hiisipeli : PhysicsGame
     int kenttanro = 0;
     public override void Begin()
     {
-        SeuraavaKentta();       
+        MultiSelectWindow alkuValikko = new MultiSelectWindow("Hiisipeli", "Aloita peli", "Lopeta");
+        alkuValikko.AddItemHandler(0, SeuraavaKentta);
+        alkuValikko.AddItemHandler(1, Exit);
+        alkuValikko.Color = Color.Green;
+        Level.BackgroundColor = Color.Gray;
+        Add(alkuValikko);               
     }
 
     /// <summary>
@@ -150,8 +155,6 @@ public class Hiisipeli : PhysicsGame
         LuoKentta();
         LuoOhjaus();
         Level.Background.CreateGradient(Color.White, Color.Black);
-        
-
     }
 
 
@@ -176,6 +179,7 @@ public class Hiisipeli : PhysicsGame
         tiles.Execute(tileWidth, tileHeight);
     }
 
+
     private void LuoOhjaus()
     {
         Keyboard.Listen(Key.F1, ButtonState.Pressed, ShowControlHelp, "Näytä kontrollit");
@@ -195,20 +199,25 @@ public class Hiisipeli : PhysicsGame
         Keyboard.Listen(Key.A, ButtonState.Pressed, SaadaNopeus, "Liikuta ritaria Vasemmalle", pelaaja, nopeusVasemmalle);
         Keyboard.Listen(Key.A, ButtonState.Released, SaadaNopeus, null, pelaaja, -nopeusVasemmalle);
 
-        Keyboard.Listen(Key.Up, ButtonState.Pressed, LyoMiekalla, null, 0.0, 95.0);
+        Keyboard.Listen(Key.Up, ButtonState.Pressed, LyoMiekalla, null, 0.0, 95.0, 0.0);
         /// Keyboard.Listen(Key.Up, ButtonState.Released, PoistaMiekka, null, Miekka);
 
-        Keyboard.Listen(Key.Down, ButtonState.Pressed, LyoMiekalla, null, 0.0, -95.0);
+        Keyboard.Listen(Key.Down, ButtonState.Pressed, LyoMiekalla, null, 0.0, -95.0, 180.0);
         /// Keyboard.Listen(Key.Down, ButtonState.Released, PoistaMiekka, null, Miekka);
 
-        Keyboard.Listen(Key.Left, ButtonState.Pressed, LyoMiekalla, null, -80.0, 0.0);
+        Keyboard.Listen(Key.Left, ButtonState.Pressed, LyoMiekalla, null, -80.0, 0.0, -90.0);
         /// Keyboard.Listen(Key.Left, ButtonState.Released, PoistaMiekka, null, Miekka);
 
-        Keyboard.Listen(Key.Right, ButtonState.Pressed, LyoMiekalla, null, 80.0, 0.0);
+        Keyboard.Listen(Key.Right, ButtonState.Pressed, LyoMiekalla, null, 80.0, 0.0, 90.0);
         /// Keyboard.Listen(Key.Right, ButtonState.Released, PoistaMiekka, null, Miekka);
     }
 
 
+    /// <summary>
+    /// Mahdollistetaan pelaajan liikkuminen 8 suuntaan
+    /// </summary>
+    /// <param name="pelaaja"></param>
+    /// <param name="nopeus"></param>
     private void SaadaNopeus(PhysicsObject pelaaja, Vector nopeus)
     {
         pelaaja.Velocity += nopeus;
@@ -255,7 +264,13 @@ public class Hiisipeli : PhysicsGame
         Add(Seina);
     }
 
-
+    /// <summary>
+    /// Ovi pituussuunnassa
+    /// </summary>
+    /// <param name="paikka"></param>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <param name="vari"></param>
     private void LuoRikottavaSeinay(Vector paikka, double x, double y, Color vari)
     {
         rikottavaseinay = PhysicsObject.CreateStaticObject(80.0, 200.0);
@@ -266,7 +281,13 @@ public class Hiisipeli : PhysicsGame
         Add(rikottavaseinay, -1);
     }
 
-
+    /// <summary>
+    /// Ovi leveyssuunnassa
+    /// </summary>
+    /// <param name="paikka"></param>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <param name="vari"></param>
     private void LuoRikottavaSeinax(Vector paikka, double x, double y, Color vari)
     {
         rikottavaseinax = PhysicsObject.CreateStaticObject(250.0, 100.0);
@@ -302,6 +323,11 @@ public class Hiisipeli : PhysicsGame
     }
 
 
+    /// <summary>
+    /// Perushiisien aivoaliohjelma
+    /// </summary>
+    /// <param name="pelaaja"></param>
+    /// <returns></returns>
     private FollowerBrain Aivot(PhysicsObject pelaaja)
     {
         FollowerBrain aivot = new FollowerBrain(pelaaja);
@@ -329,6 +355,11 @@ public class Hiisipeli : PhysicsGame
     }
 
 
+    /// <summary>
+    /// Aivoaliohjelma ampuville hiisille
+    /// </summary>
+    /// <param name="pelaaja"></param>
+    /// <returns></returns>
     private FollowerBrain AmpujaAivot(PhysicsObject pelaaja)
     {
         FollowerBrain aivot = new FollowerBrain(pelaaja);
@@ -340,11 +371,14 @@ public class Hiisipeli : PhysicsGame
 
     }
 
+
     private void Ampuu()
     {
-        Timer.Limit(Ampuu, 2.0);
+        // Timer.Limit(Ampuu, 2.0);
+        Timer ampumisLaskuri = new Timer();
+        ampumisLaskuri.Interval = 2.0;
+        ampumisLaskuri.Timeout += Ampuu;
         PhysicsObject nuoli = HiidenNuoli(jousihiisi);
-        Add(nuoli);
         Timer.CreateAndStart(2.0, nuoli.Destroy);
     }
 
@@ -356,10 +390,12 @@ public class Hiisipeli : PhysicsGame
         nuoli.Color = Color.Red;
         nuoli.X = jousihiisi.X;
         nuoli.Y = jousihiisi.Y;
+        nuoli.Restitution = 0;
         nuoli.Velocity = new Vector(pelaaja.X, pelaaja.Y);
         nuoli.Tag = "nuoli";
         nuoli.IgnoresCollisionWith(jousihiisi);
         nuoli.IgnoresCollisionWith(hiisi);
+
         return nuoli;
     }
 
@@ -414,17 +450,13 @@ public class Hiisipeli : PhysicsGame
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <param name="miekka"></param>
-    private void LyoMiekalla(double x, double y)
+    private void LyoMiekalla(double x, double y, double kulma)
     {
-        // Tähän TeeMiekka- aliohjelman kutsu
-        //if (miekka != null)
-        //{
-        //    Add(miekka);
-        //}
         PhysicsObject miekka =  TeeMiekka();
 
         miekka.X = pelaaja.X + x;
         miekka.Y = pelaaja.Y + y;
+        Angle miekanKulma = miekka.Angle;
         Timer.CreateAndStart(0.1, miekka.Destroy);
         Remove(miekka);
     }
@@ -434,7 +466,7 @@ public class Hiisipeli : PhysicsGame
     private PhysicsObject TeeMiekka()
     {
         PhysicsObject miekka = PhysicsObject.CreateStaticObject(40.0, 60.0);
-        miekka.Shape = Shape.Triangle;
+        miekka.Shape = Shape.Circle;
         miekka.Color = Color.SkyBlue;
         miekka.Tag = "miekka";
         miekka.IgnoresPhysicsLogics = true;
@@ -482,15 +514,17 @@ public class Hiisipeli : PhysicsGame
 
     private void KasittelePisteet(PhysicsObject miekka, PhysicsObject kohde)
     {
-        int onkovika = RandomGen.NextInt(5);
         tapot.Value += 1;
         if (tapot.Value == hiisia.Value && kenttanro != 4)
         {
+<<<<<<< HEAD
             // TÄMÄ SILMUKAKSI !!!
             //!!!
             //!!!
             Remove(rikottavaseinax);
             Remove(rikottavaseinay);
+=======
+>>>>>>> de33d3f8c9998406d3f36e7896293c060be1f331
             Remove(rikottavaseinax);
             Remove(rikottavaseinay);
         }
@@ -501,6 +535,11 @@ public class Hiisipeli : PhysicsGame
     }
 
 
+    /// <summary>
+    /// Kruunun koskettamisen määrittely
+    /// </summary>
+    /// <param name="pelaaja"></param>
+    /// <param name="kruunu"></param>
     private void KoskeKruunua(PhysicsObject pelaaja, PhysicsObject kruunu)
     {
         Remove(pelaaja);
