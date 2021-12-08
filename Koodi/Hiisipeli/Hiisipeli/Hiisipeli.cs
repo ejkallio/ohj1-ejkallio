@@ -107,19 +107,21 @@ public class Hiisipeli : PhysicsGame
     private static readonly int tileWidth = 1000 / lines_1[0].Length;
     private static readonly int tileHeight = 800 / lines_1.Length;
 
-    Vector nopeusYlos = new Vector(0, 300);
-    Vector nopeusAlas = new Vector(0, -300);  
-    Vector nopeusOikealle = new Vector(300, 0);
-    Vector nopeusVasemmalle = new Vector(-300, -0);
 
-    PhysicsObject pelaaja;
-    PhysicsObject hiisi;
-    PhysicsObject jousihiisi;
-    PhysicsObject rikottavaseinax;
-    PhysicsObject rikottavaseinay;
-    IntMeter tapot;
-    IntMeter hiisia;
-    int kenttanro = 0;
+    // Näkyvyydet
+    private Vector nopeusYlos = new Vector(0, 300);
+    private Vector nopeusAlas = new Vector(0, -300);  
+    private Vector nopeusOikealle = new Vector(300, 0);
+    private Vector nopeusVasemmalle = new Vector(-300, -0);
+
+    private PhysicsObject pelaaja;
+    private PhysicsObject hiisi;
+    private PhysicsObject jousihiisi;
+    private PhysicsObject rikottavaseinax;
+    private PhysicsObject rikottavaseinay;
+    private IntMeter tapot;
+    private IntMeter hiisia;
+    private int kenttanro = 0;
 
 
     /// <summary>
@@ -241,8 +243,8 @@ public class Hiisipeli : PhysicsGame
     /// (Rikkoo tällä hetkellä pelin fysiikkaa sen verran että pelaajahahmo lähtee törmättyään
     /// esineeseen poukkoilemaan vastakkaiseen suuntaan.)
     /// </summary>
-    /// <param name="pelaaja"></param>
-    /// <param name="nopeus"></param>
+    /// <param name="pelaaja">Pelaajaolio jonka nopeutta säädetään</param>
+    /// <param name="nopeus">Pelaajan määritelty nopeus eri suuntiin</param>
     private void SaadaNopeus(PhysicsObject pelaaja, Vector nopeus)
     {
         pelaaja.Velocity += nopeus;
@@ -252,15 +254,15 @@ public class Hiisipeli : PhysicsGame
         if (pelaaja.Velocity.Y < -300.0) pelaaja.Velocity = new Vector(pelaaja.Velocity.X, -300.0);
 
     }
-    
+
 
     /// <summary>
     /// Luodaan pituussuuntaan seinä
     /// </summary>
-    /// <param name="paikka"></param>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
-    /// <param name="vari"></param>
+    /// <param name="paikka">Objectin sijainti kentässä</param>
+    /// <param name="x">Fysiikkaobjektin leveys</param>
+    /// <param name="y">Fysiikkaobjektin pituus</param>
+    /// <param name="vari">Objektin väri</param>
     private void LuoSeinay(Vector paikka, double x, double y, Color vari)
     {
         PhysicsObject Seina = PhysicsObject.CreateStaticObject(80.0, 300.0);
@@ -275,10 +277,10 @@ public class Hiisipeli : PhysicsGame
     /// <summary>
     /// Luodaan leveyssuuntaan seinä
     /// </summary>
-    /// <param name="paikka"></param>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
-    /// <param name="vari"></param>
+    /// <param name="paikka">Objectin sijainti kentässä</param>
+    /// <param name="x">Fysiikkaobjektin leveys</param>
+    /// <param name="y">Fysiikkaobjektin pituus</param>
+    /// <param name="vari">Objektin väri</param>
     private void LuoSeinax(Vector paikka, double x, double y, Color vari)
     {
         PhysicsObject Seina = PhysicsObject.CreateStaticObject(400.0, 100.0);
@@ -293,10 +295,10 @@ public class Hiisipeli : PhysicsGame
     /// <summary>
     /// Ovi pituussuunnassa
     /// </summary>
-    /// <param name="paikka"></param>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
-    /// <param name="vari"></param>
+    /// <param name="paikka">Objectin sijainti kentässä</param>
+    /// <param name="x">Fysiikkaobjektin leveys</param>
+    /// <param name="y">Fysiikkaobjektin pituus</param>
+    /// <param name="vari">Objektin väri</param>
     private void LuoRikottavaSeinay(Vector paikka, double x, double y, Color vari)
     {
         rikottavaseinay = PhysicsObject.CreateStaticObject(80.0, 200.0);
@@ -311,10 +313,10 @@ public class Hiisipeli : PhysicsGame
     /// <summary>
     /// Ovi leveyssuunnassa
     /// </summary>
-    /// <param name="paikka"></param>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
-    /// <param name="vari"></param>
+    /// <param name="paikka">Objectin sijainti kentässä</param>
+    /// <param name="x">Fysiikkaobjektin leveys</param>
+    /// <param name="y">Fysiikkaobjektin pituus</param>
+    /// <param name="vari">Objektin väri</param>
     private void LuoRikottavaSeinax(Vector paikka, double x, double y, Color vari)
     {
         rikottavaseinax = PhysicsObject.CreateStaticObject(250.0, 100.0);
@@ -330,10 +332,10 @@ public class Hiisipeli : PhysicsGame
     /// Luodaan pelin vihollinen eli hiisi,
     /// joka koskettaessaan pelaajaa tappaa hänet
     /// </summary>
-    /// <param name="paikka"></param>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
-    /// <param name="vari"></param>
+    /// <param name="paikka">Objectin sijainti kentässä</param>
+    /// <param name="x">Fysiikkaobjektin leveys</param>
+    /// <param name="y">Fysiikkaobjektin pituus</param>
+    /// <param name="vari">Objektin väri</param>
     private void LuoHiisi(Vector paikka, double x, double y, Color vari)
     {
         hiisi = new PhysicsObject(60.0, 60.0);
@@ -353,8 +355,8 @@ public class Hiisipeli : PhysicsGame
     /// <summary>
     /// Perushiisien aivoaliohjelma
     /// </summary>
-    /// <param name="pelaaja"></param>
-    /// <returns></returns>
+    /// <param name="pelaaja">Pelaajaolio jota viholliset seuraa</param>
+    /// <returns>Pelauttaa vihollisten seuraajatekoälyn</returns>
     private FollowerBrain Aivot(PhysicsObject pelaaja)
     {
         FollowerBrain aivot = new FollowerBrain(pelaaja);
@@ -385,8 +387,8 @@ public class Hiisipeli : PhysicsGame
     /// <summary>
     /// Aivoaliohjelma ampuville hiisille
     /// </summary>
-    /// <param name="pelaaja"></param>
-    /// <returns></returns>
+    /// <param name="pelaaja">Pelaajaolio jota kohti hiisi ampuu</param>
+    /// <returns>Palauttaa ampujatekoälyn</returns>
     private FollowerBrain AmpujaAivot(PhysicsObject pelaaja)
     {
         FollowerBrain aivot = new FollowerBrain(pelaaja);
@@ -417,8 +419,8 @@ public class Hiisipeli : PhysicsGame
     /// <summary>
     /// Funktio jossa määritellään jousihiisien käyttämät ammukset.
     /// </summary>
-    /// <param name="jousihiisi"></param>
-    /// <returns></returns>
+    /// <param name="jousihiisi">Hiisi jolle halutaan antaa kyky ampua</param>
+    /// <returns>Palauttaa nuolen</returns>
     private PhysicsObject HiidenNuoli(PhysicsObject jousihiisi)
     {
         PhysicsObject nuoli = new PhysicsObject(10.0, 10.0);
@@ -439,7 +441,7 @@ public class Hiisipeli : PhysicsGame
     /// <summary>
     /// Luodaan räjähdys joka tapahtuu pelaajan tuhoutuessa
     /// </summary>
-    /// <param name="pelaaja"></param>
+    /// <param name="pelaaja">Pelaajaolio</param>
     private void TapaPelaaja(IPhysicsObject pelaaja)
     {
         Explosion kuolema = new Explosion(pelaaja.Width * 2);
@@ -457,7 +459,7 @@ public class Hiisipeli : PhysicsGame
     /// <summary>
     /// Luodaan räjähdys joka tapahtuu vihollisen tuhoutuessa
     /// </summary>
-    /// <param name="hiisi"></param>
+    /// <param name="hiisi">Hiisi jonka tuhoutuminen käsitellään</param>
     private void TapaHiisi(IPhysicsObject hiisi)
     {
         Explosion kuolema = new Explosion(hiisi.Width * 2);
@@ -471,8 +473,8 @@ public class Hiisipeli : PhysicsGame
     /// <summary>
     /// Käsitellään vihollisen osumista pelaajaan
     /// </summary>
-    /// <param name="pelaaja"></param>
-    /// <param name="hiisi"></param>
+    /// <param name="pelaaja">Pelaajaolio</param>
+    /// <param name="hiisi">Vihollinen joka osuu pelaajaan</param>
     private void PelaajaanOsui(PhysicsObject pelaaja, PhysicsObject hiisi)
     {
         TapaPelaaja(pelaaja);
@@ -483,8 +485,8 @@ public class Hiisipeli : PhysicsGame
     /// <summary>
     /// Käsitellään miekan osumista viholliseen
     /// </summary>
-    /// <param name="Miekka"></param>
-    /// <param name="hiisi"></param>
+    /// <param name="Miekka">Pelaajan miekka</param>
+    /// <param name="hiisi">Vihollinen johon miekka osuu</param>
     private void HiiteenOsui(PhysicsObject Miekka, PhysicsObject hiisi)
     {
         TapaHiisi(hiisi);
@@ -494,8 +496,8 @@ public class Hiisipeli : PhysicsGame
     /// <summary>
     /// Kentän vaihtumista käsittelevä aliohjelma
     /// </summary>
-    /// <param name="pelaaja"></param>
-    /// <param name="Reuna"></param>
+    /// <param name="pelaaja">Pelaajaolio</param>
+    /// <param name="Reuna">Reuna jota pelaaja koskettaa</param>
     private void SeuraavaTaso(PhysicsObject pelaaja, PhysicsObject Reuna)
     {
         kenttanro++;
@@ -506,9 +508,9 @@ public class Hiisipeli : PhysicsGame
     /// <summary>
     /// Luodaan miekanlyönti joka tapahtuu nuolinäppäimistä
     /// </summary>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
-    /// <param name="miekka"></param>
+    /// <param name="x">Miekanlyönnin sijainti vaakasuunnassa</param>
+    /// <param name="y">Miekanlyönnin sijainti pystysuunnassa</param>
+    /// <param name="miekka">Miekka jolla lyödään</param>
     private void LyoMiekalla(double x, double y, double kulma)
     {
         PhysicsObject miekka =  TeeMiekka();
@@ -524,7 +526,7 @@ public class Hiisipeli : PhysicsGame
     /// <summary>
     /// Funktio joka palauttaa miekka-fysiikkaolion 
     /// </summary>
-    /// <returns></returns>
+    /// <returns>Palauttaa miekka- fysiikkaolion</returns>
     private PhysicsObject TeeMiekka()
     {
         PhysicsObject miekka = PhysicsObject.CreateStaticObject(40.0, 60.0);
@@ -543,7 +545,7 @@ public class Hiisipeli : PhysicsGame
     /// <summary>
     /// Funktio luo peliin kruunun jota koskettamalla voitetaan peli.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>Palauttaa kruunun</returns>
     private PhysicsObject LuoKruunu()
     {
         PhysicsObject kruunu = PhysicsObject.CreateStaticObject(40.0, 20.0);
@@ -558,7 +560,7 @@ public class Hiisipeli : PhysicsGame
     /// <summary>
     /// Laskuri joka laskee pelaajan tuhoamat viholliset
     /// </summary>
-    /// <returns></returns>
+    /// <returns>Palauttaa tappolaskurin</returns>
     private IntMeter LuoTappoLaskuri()
     {
         IntMeter laskuri = new IntMeter(0);
@@ -570,7 +572,7 @@ public class Hiisipeli : PhysicsGame
     /// <summary>
     /// Laskuri joka laskee jokaisen kentän vihollismäärän
     /// </summary>
-    /// <returns></returns>
+    /// <returns>Palauttaa vihollislaskurin</returns>
      private IntMeter LuoHiisiLaskuri()
     {
         IntMeter laskuri = new IntMeter(0);
@@ -592,8 +594,8 @@ public class Hiisipeli : PhysicsGame
     /// <summary>
     /// Miekan osumista viholliseen käsittelevä aliohjelma
     /// </summary>
-    /// <param name="miekka"></param>
-    /// <param name="kohde"></param>
+    /// <param name="miekka">Miekka- physicsobject</param>
+    /// <param name="kohde">Vihollinen jota lyödään miekalla</param>
     private void KasittelePisteet(PhysicsObject miekka, PhysicsObject kohde)
     {
         tapot.Value += 1;
@@ -617,8 +619,8 @@ public class Hiisipeli : PhysicsGame
     /// <summary>
     /// Kruunun koskettamisen määrittely
     /// </summary>
-    /// <param name="pelaaja"></param>
-    /// <param name="kruunu"></param>
+    /// <param name="pelaaja">Pelaajaolio</param>
+    /// <param name="kruunu">Kruunu</param>
     private void KoskeKruunua(PhysicsObject pelaaja, PhysicsObject kruunu)
     {
         Remove(pelaaja);
